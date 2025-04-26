@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Validation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">News Validation System</h1>
+
+        <!-- News Input Form -->
+        <form method="POST" action="{% url 'index' %}" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- News Text -->
+            <div>
+                <label for="news_text" class="block text-sm font-medium text-gray-700 mb-1">Enter News Text:</label>
+                <textarea name="news_text" id="news_text" rows="4" required
+                          class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">{{ request.POST.news_text }}</textarea>
+            </div>
+
+            <!-- Model Selection -->
+            <div>
+                <label for="model_choice" class="block text-sm font-medium text-gray-700 mb-1">Select ML Model:</label>
+                <select name="model_choice" id="model_choice" required
+                        class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <option value="">-- Choose Model --</option>
+                    <option value="naive_bayes" {% if request.POST.model_choice == 'naive_bayes' %}selected{% endif %}>Naive Bayes</option>
+                    <option value="svm" {% if request.POST.model_choice == 'svm' %}selected{% endif %}>Support Vector Machine</option>
+                    <option value="random_forest" {% if request.POST.model_choice == 'random_forest' %}selected{% endif %}>Random Forest</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition">
+                    Validate News
+                </button>
+            </div>
+        </form>
+
+        <!-- Display Results -->
+        {% if result %}
+        <div class="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-700 mb-2">Validation Result:</h2>
+            <p class="text-gray-800"><strong>Status:</strong> 
+                <span class="{% if result == 'Fake' %}text-red-600{% else %}text-green-600{% endif %}">
+                    {{ result }}
+                </span>
+            </p>
+            <p class="text-gray-800"><strong>Confidence Score:</strong> {{ confidence }}%</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
